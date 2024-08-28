@@ -1,13 +1,20 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    [Header("Movement Section")]
-    [SerializeField] float moveSpeed = 5f;
+    PlayerInput playerInput;
 
+    [Header("Movement Section")]
+
+    float currentSpeed;
+    [SerializeField] float walkSpeed = 250f;
+    [SerializeField] float sprintSpeed = 350f;
+    Vector3 moveInput;
 
     Rigidbody playerRigidbody;
 
@@ -18,51 +25,47 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-
+        Setup();
     }
 
-    private void Update()
+    void Setup()
     {
-        ControlMovement();
+        playerInput = GetComponent<PlayerInput>();
+
+        currentSpeed = walkSpeed;
+
+
     }
 
-    private void ControlMovement()
+    private void FixedUpdate()
     {
-        Vector2 inputVector = new Vector2(0, 0);
-
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            if (playerRigidbody != null)
-            {
-                playerRigidbody.AddRelativeForce(Vector3.forward * moveSpeed, ForceMode.Force);
-            }
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            if (playerRigidbody != null)
-            {
-                playerRigidbody.AddRelativeForce(Vector3.back * moveSpeed, ForceMode.Force);
-            }
-        }
-        if (Input.GetKey(KeyCode.A))
-        {
-            if (playerRigidbody != null)
-            {
-                playerRigidbody.AddRelativeForce(Vector3.left * moveSpeed, ForceMode.Force);
-            }
-        }
-        if (Input.GetKey(KeyCode.D))
-        {
-            if (playerRigidbody != null)
-            {
-                playerRigidbody.AddRelativeForce(Vector3.right * moveSpeed, ForceMode.Force);
-            }
-        }
-
-        inputVector = inputVector.normalized;
-
-        Debug.Log(inputVector);
+        PlayerMovement();
 
     }
+
+    void OnMove(InputValue value)
+    {
+        moveInput = value.Get<Vector3>();
+    }
+
+    void OnSprint(InputValue value)
+    {
+        bool sprintInput = value.isPressed;
+        if (sprintInput)
+        {
+            currentSpeed = sprintSpeed;
+        }
+        else
+        {
+            currentSpeed = walkSpeed;
+        }
+        UnityEngine.Debug.Log(sprintInput);
+    }
+
+    void PlayerMovement()
+    {
+        playerRigidbody.velocity = new Vector3(moveInput.x * currentSpeed * Time.deltaTime, 0, moveInput.z * currentSpeed * Time.deltaTime);
+    }
+
+
 }
