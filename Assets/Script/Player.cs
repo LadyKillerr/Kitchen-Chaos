@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] float walkSpeed = 250f;
     [SerializeField] float sprintSpeed = 350f;
     Vector3 moveInput;
+    [SerializeField] float rotateSpeed = 10f;
 
     Rigidbody playerRigidbody;
 
@@ -65,6 +66,10 @@ public class Player : MonoBehaviour
     void PlayerMovement()
     {
         playerRigidbody.velocity = new Vector3(moveInput.x * currentSpeed * Time.deltaTime, 0, moveInput.z * currentSpeed * Time.deltaTime);
+
+        Vector3 lookDirection = moveInput;
+        
+        transform.forward = Vector3.Slerp(transform.forward, lookDirection, Time.deltaTime * rotateSpeed);
     }
 
 
