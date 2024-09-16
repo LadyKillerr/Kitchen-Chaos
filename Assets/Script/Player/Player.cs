@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -42,14 +43,18 @@ public class Player : MonoBehaviour
 
     }
 
+    // Fixed Update are for movement 
     private void FixedUpdate()
     {
         PlayerMovement();
 
     }
 
-
-    
+    // Update are for normal functions
+    private void Update()
+    {
+        
+    }
 
     void PlayerMovement()
     {
@@ -57,7 +62,7 @@ public class Player : MonoBehaviour
 
 
         // manipulate running speed
-        if (isRunning)
+        if (isRunning)  
         {
             currentSpeed = sprintSpeed;
         }
@@ -87,6 +92,11 @@ public class Player : MonoBehaviour
         
         // make player face turns slowly toward his moving direction
         transform.forward = Vector3.Slerp(transform.forward, lookDirection, Time.deltaTime * rotateSpeed);
+
+        // Check what is infront of the player
+        float rayLength = 0.7f;
+        Physics.Raycast(transform.position, lookDirection, rayLength);
+    
     }
 
     #region PlayerSetter
