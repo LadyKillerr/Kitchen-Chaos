@@ -20,9 +20,9 @@ public class GameInput : MonoBehaviour
     void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector3>();
-
+        
         // Look in the processors of the input actions settings
-        //moveInput = moveInput.normalized;
+        moveInput = moveInput.normalized;
     }
 
 

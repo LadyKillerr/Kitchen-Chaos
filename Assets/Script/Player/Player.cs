@@ -5,6 +5,7 @@ using System.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Debug = UnityEngine.Debug;
 
 public class Player : MonoBehaviour
 {
@@ -48,21 +49,15 @@ public class Player : MonoBehaviour
     {
         PlayerMovement();
 
-    }
 
-    // Update are for normal functions
-    private void Update()
-    {
-        
-    }
 
+    }
     void PlayerMovement()
     {
         playerRigidbody.velocity = new Vector3(gameInput.MoveInput.x * currentSpeed * Time.deltaTime, 0, gameInput.MoveInput.z * currentSpeed * Time.deltaTime);
 
-
         // manipulate running speed
-        if (isRunning)  
+        if (isRunning)
         {
             currentSpeed = sprintSpeed;
         }
@@ -86,19 +81,22 @@ public class Player : MonoBehaviour
             isRunning = false;
         }
 
-        //UnityEngine.Debug.Log(playerRigidbody.velocity);
+        Vector3 lookDirection = gameInput.MoveInput;
 
-        Vector3 lookDirection = gameInput.MoveInput ;
-        
         // make player face turns slowly toward his moving direction
         transform.forward = Vector3.Slerp(transform.forward, lookDirection, Time.deltaTime * rotateSpeed);
 
         // Check what is infront of the player
-        float rayLength = 0.7f;
-        Physics.Raycast(transform.position, lookDirection, rayLength);
-    
-    }
+        //float moveDistance = currentSpeed * Time.deltaTime;
+        //float playerRadius = 0.5f;
+        //float playerHeight = 2f;
 
+        //bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, lookDirection, moveDistance);
+
+        
+
+
+    }
     #region PlayerSetter
     public void SetIsRunning(bool value)
     {
