@@ -18,8 +18,6 @@ public class PlayerAnimation : MonoBehaviour
     private void Update()
     {
         MovementAnimationToggle();
-        Debug.Log("Running is : " + player.IsRunning);
-        Debug.Log("Walking is: " + player.IsWalking);
     }
 
     private void MovementAnimationToggle()

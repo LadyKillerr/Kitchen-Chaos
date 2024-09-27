@@ -11,6 +11,7 @@ TagManager:
   - 
   - Water
   - UI
+  - Counters
   - 
   - 
   - 
@@ -36,7 +37,6 @@ TagManager:
   - 
   - 
   - 
-  - PostProcessingLayer
   m_SortingLayers:
   - name: Default
     uniqueID: 0

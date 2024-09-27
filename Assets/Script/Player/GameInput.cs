@@ -8,7 +8,7 @@ public class GameInput : MonoBehaviour
     [SerializeField] Player player;
 
     Vector3 moveInput;
-    public Vector3 MoveInput{get { return moveInput; }}
+    public Vector3 MoveInputNormalized{get { return moveInput; }}
 
 
     void OnSprint(InputValue value)
@@ -27,3 +27,4 @@ public class GameInput : MonoBehaviour
 
 
 }
+                             
