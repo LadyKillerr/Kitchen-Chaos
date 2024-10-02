@@ -4,28 +4,38 @@ using UnityEngine;
 
 public class PlayerAnimation : MonoBehaviour
 {
-    private const string IS_WALKING = "IsWalking";
-    private const string IS_RUNNING = "IsRunning";
+    const string IS_WALKING = "IsWalking";
+    const string IS_RUNNING = "IsRunning";
 
-    [SerializeField] Player player;
     Animator playerAnimator;
 
-    private void Awake()
+    void Awake()
     {
         playerAnimator = GetComponent<Animator>();
     }
 
-    private void Update()
+    void Update()
     {
-        MovementAnimationToggle();
+
     }
 
-    private void MovementAnimationToggle()
+    public void RunningAnimation(bool val)
     {
-        playerAnimator.SetBool(IS_WALKING, player.IsWalking);
-        playerAnimator.SetBool(IS_RUNNING, player.IsRunning);
+        if (val)
+        {
+            playerAnimator.SetBool(IS_RUNNING, true);
+            playerAnimator.SetBool(IS_WALKING, false);
+        }
+        else
+        {
+            playerAnimator.SetBool(IS_RUNNING, false);
+            playerAnimator.SetBool(IS_WALKING, true);
+        }
     }
 
-
-
+    public void IdlingAnimation()
+    {
+        playerAnimator.SetBool(IS_RUNNING, false);
+        playerAnimator.SetBool(IS_WALKING, false);
+    }
 }

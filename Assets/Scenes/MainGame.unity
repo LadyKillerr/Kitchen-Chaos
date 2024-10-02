@@ -732,13 +732,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameInput: {fileID: 1074511484}
-  walkSpeed: 250
-  sprintSpeed: 350
+  currentSpeed: 0
+  walkSpeed: 500
+  sprintSpeed: 1000
   rotateSpeed: 10
-  interactDistance: 1
+  interactDistance: 1.5
   countersLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
 --- !u!4 &1074511480
 Transform:
   m_ObjectHideFlags: 0
@@ -826,6 +827,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1074511479}
+  move: {fileID: 6316463942627629771, guid: f520bd9c01124f64f816d8a6e8735a08, type: 3}
+  attack: {fileID: 9052774224855393291, guid: f520bd9c01124f64f816d8a6e8735a08, type: 3}
+  sprint: {fileID: -5969156562144991433, guid: f520bd9c01124f64f816d8a6e8735a08, type: 3}
 --- !u!136 &1074511485
 CapsuleCollider:
   m_ObjectHideFlags: 0

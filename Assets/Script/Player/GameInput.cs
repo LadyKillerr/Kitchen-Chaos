@@ -6,25 +6,36 @@ using UnityEngine.InputSystem;
 public class GameInput : MonoBehaviour
 {
     [SerializeField] Player player;
+    [SerializeField] InputActionReference move, attack, sprint;
 
-    Vector3 moveInput;
-    public Vector3 MoveInputNormalized{get { return moveInput; }}
-
-
-    void OnSprint(InputValue value)
-    {
-        player.SetIsRunning(value.isPressed);
-    }
+    //void OnSprint(InputValue value)
+    //{
+    //    player.SetIsRunning(value.isPressed);
+    //}
 
 
-    void OnMove(InputValue value)
-    {
-        moveInput = value.Get<Vector3>();
+    //void OnMove(InputValue value)
+    //{
+    //    moveInput = value.Get<Vector3>();
         
-        // Look in the processors of the input actions settings
-        moveInput = moveInput.normalized;
+    //    // Look in the processors of the input actions settings
+    //    moveInput = moveInput.normalized;
+    //}
+
+    public Vector3 GetMovementVectorNormalized()
+    {
+        Vector3 inputVector = move.action.ReadValue<Vector3>();
+
+        inputVector = inputVector.normalized;
+
+        return inputVector;
     }
 
+    public bool GetSprintState()
+    {
+        bool isSprint = sprint.action.IsPressed();
 
+        return isSprint;
+    }
 }
                              

@@ -7,37 +7,31 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Debug = UnityEngine.Debug;
 
+[RequireComponent(typeof(GameInput))]
 public class Player : MonoBehaviour
 {
     [SerializeField] GameInput gameInput;
 
-    [Header("Movement Section")]
-    float currentSpeed;
-
-    bool isRunning;
-    public bool IsRunning { get { return isRunning; } }
-
-    bool isWalking;
-    public bool IsWalking { get { return isWalking; } }
-
     [Header("Player Movement")]
+    Vector3 lastInteractDirection;
+    [SerializeField] float currentSpeed;
     [SerializeField] float walkSpeed = 250f;
     [SerializeField] float sprintSpeed = 350f;
     [SerializeField] float rotateSpeed = 10f;
 
-    [Header("PlayerInteractions")]
+    [Header("Player Interactions")]
     [SerializeField] float interactDistance = 2f;
     [SerializeField] LayerMask countersLayerMask;
 
-    Vector3 lastInteractDirection;
-
-
+    [Header("Player Animations")]
+    PlayerAnimation playerAnimation;
 
     Rigidbody playerRigidbody;
 
     private void Awake()
     {
         playerRigidbody = GetComponent<Rigidbody>();
+        playerAnimation = GetComponentInChildren<PlayerAnimation>();
     }
 
     void Start()
@@ -64,15 +58,17 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        HandleInteractions();    
+        HandleInteractions();
     }
+
+    #region PlayerInteractions
 
     void HandleInteractions()
     {
         // if not save look direction somewhere then when the player stops, the raycast is not pointing anywhere.
-        Vector3 lookDirection = gameInput.MoveInputNormalized;
+        Vector3 lookDirection = gameInput.GetMovementVectorNormalized();
 
-        if(lookDirection != Vector3.zero)
+        if (lookDirection != Vector3.zero)
         {
             // trying to keep track of the lookDirection even when not moving
             lastInteractDirection = lookDirection;
@@ -80,74 +76,50 @@ public class Player : MonoBehaviour
 
         // this raycastHitInfo will let us know what object hit the raycast collision
         if (Physics.Raycast(transform.position, lastInteractDirection, out RaycastHit raycastHitInfo, interactDistance, countersLayerMask))
-            // added in countersLayerMask to only point the raycast towards objects marked with counters layers, others object will not be called even tho the raycast is pointing towards it 
+        // added in countersLayerMask to only point the raycast towards objects marked with counters layers, others object will not be called even tho the raycast is pointing towards it 
         {
             if (raycastHitInfo.transform.TryGetComponent(out ClearCounter clearCounter))
             {
                 clearCounter.IsInteracted();
             }
         }
-
-        
-
-
     }
+
+    #endregion
+
+    #region PlayerMovement
 
     void PlayerMovement()
     {
-        playerRigidbody.velocity = new Vector3(gameInput.MoveInputNormalized.x * currentSpeed * Time.deltaTime, 0, gameInput.MoveInputNormalized.z * currentSpeed * Time.deltaTime);
+        Vector3 movementDirection = gameInput.GetMovementVectorNormalized();
+        playerRigidbody.velocity = movementDirection * Time.deltaTime * currentSpeed;
 
-        // manipulate running speed
-        if (isRunning)
+        // manipulate running speed and movement animation
+        if (gameInput.GetSprintState() && playerRigidbody.velocity != Vector3.zero)
         {
             currentSpeed = sprintSpeed;
+            playerAnimation.RunningAnimation(true);
         }
-        else
+        else if (!gameInput.GetSprintState() && playerRigidbody.velocity != Vector3.zero)
         {
             currentSpeed = walkSpeed;
-        }
-
-        // isWalking is true when player velocity != 0
-        if (playerRigidbody.velocity != Vector3.zero && !isRunning)
-        {
-            isWalking = true;
-        }
-        else if (playerRigidbody.velocity != Vector3.zero && isRunning)
-        {
-            isRunning = true;
+            playerAnimation.RunningAnimation(false);
         }
         else if (playerRigidbody.velocity == Vector3.zero)
         {
-            isWalking = false;
-            isRunning = false;
+            playerAnimation.IdlingAnimation();
         }
 
-        Vector3 lookDirection = gameInput.MoveInputNormalized;
+        Vector3 lookDirection = gameInput.GetMovementVectorNormalized();
 
         // make player face turns slowly toward his moving direction
         transform.forward = Vector3.Slerp(transform.forward, lookDirection, Time.deltaTime * rotateSpeed);
-
-        // Check what is infront of the player
-        //float moveDistance = currentSpeed * Time.deltaTime;
-        //float playerRadius = 0.5f;
-        //float playerHeight = 2f;
-
-        //bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, lookDirection, moveDistance);
-
-        
-
-
     }
+
+    #endregion
+
     #region PlayerSetter
-    public void SetIsRunning(bool value)
-    {
-        isRunning = value;
-    }
 
-    public void SetIsWalking(bool value)
-    {
-        isWalking = value;
-    }
 
     #endregion
 
