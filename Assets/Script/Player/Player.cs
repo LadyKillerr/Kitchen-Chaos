@@ -36,15 +36,32 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        Setup();
-    }
-
-    void Setup()
-    {
-
         currentSpeed = walkSpeed;
 
+        gameInput.OnInteractAction += GameInput_OnInteractAction;
+    }
 
+    private void GameInput_OnInteractAction(object sender, EventArgs e)
+    {
+        // if not save look direction somewhere then when the player stops, the raycast is not pointing anywhere.
+        Vector3 lookDirection = gameInput.GetMovementVectorNormalized();
+
+        if (lookDirection != Vector3.zero)
+        {
+            // trying to keep track of the lookDirection even when not moving
+            lastInteractDirection = lookDirection;
+        }
+
+        // this raycastHitInfo will let us know what object hit the raycast collision
+        if (Physics.Raycast(transform.position, lastInteractDirection, out RaycastHit raycastHitInfo, interactDistance, countersLayerMask))
+        // added in countersLayerMask to only point the raycast towards objects marked with counters layers, others object will not be called even tho the raycast is pointing towards it 
+        {
+            if (raycastHitInfo.transform.TryGetComponent(out ClearCounter clearCounter))
+            {
+                // Has ClearCounter 
+                clearCounter.IsInteracted();
+            }
+        }
     }
 
     // Fixed Update are for movement 
@@ -52,13 +69,13 @@ public class Player : MonoBehaviour
     {
         PlayerMovement();
 
-
-
     }
 
     void Update()
     {
         HandleInteractions();
+
+
     }
 
     #region PlayerInteractions
@@ -80,7 +97,8 @@ public class Player : MonoBehaviour
         {
             if (raycastHitInfo.transform.TryGetComponent(out ClearCounter clearCounter))
             {
-                clearCounter.IsInteracted();
+                // Has ClearCounter 
+                //clearCounter.IsInteracted();
             }
         }
     }

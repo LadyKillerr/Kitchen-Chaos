@@ -2,25 +2,26 @@ using System.Collections;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
+using System;
 
 public class GameInput : MonoBehaviour
 {
+    public event EventHandler OnInteractAction;
+
     [SerializeField] Player player;
-    [SerializeField] InputActionReference move, attack, sprint;
+    [SerializeField] InputActionReference move, sprint, interact;
 
-    //void OnSprint(InputValue value)
-    //{
-    //    player.SetIsRunning(value.isPressed);
-    //}
+    void Awake()
+    {
+        // interact input listener
+        interact.action.performed += Interact_performed;
+    }
 
-
-    //void OnMove(InputValue value)
-    //{
-    //    moveInput = value.Get<Vector3>();
-        
-    //    // Look in the processors of the input actions settings
-    //    moveInput = moveInput.normalized;
-    //}
+    private void Interact_performed(InputAction.CallbackContext context)
+    {
+        //if (OnInteractAction != null) { OnInteractAction(this, EventArgs.Empty); }
+        OnInteractAction?.Invoke(this, EventArgs.Empty);
+    }
 
     public Vector3 GetMovementVectorNormalized()
     {
@@ -37,5 +38,7 @@ public class GameInput : MonoBehaviour
 
         return isSprint;
     }
+
+
 }
                              
